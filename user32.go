@@ -18,7 +18,7 @@ func FillRect(hdc win.HDC, rect win.RECT, hbr win.HBRUSH) (ok bool) {
 	return fillRect(uintptr(hdc), uintptr(unsafe.Pointer(&rect.Left)), uintptr(hbr))
 }
 
-func FindWindow(lpClassName *uint16, lpWindowName *uint16) win.HWND {
+func FindWindow(lpClassName, lpWindowName *uint16) win.HWND {
 	return win.FindWindow(lpClassName, lpWindowName)
 }
 
