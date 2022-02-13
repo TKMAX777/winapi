@@ -1,5 +1,7 @@
 package winapi
 
+const NULL uintptr = 0
+
 //go:generate go run golang.org/x/sys/windows/mkwinsyscall -output windows_generate.go windows.go
 //sys clipCursor(rect uintptr)(ok int, err error) = user32.ClipCursor
 //sys showCursor(state bool) (counter int) = user32.ShowCursor
