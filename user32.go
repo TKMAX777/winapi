@@ -1,9 +1,11 @@
 package winapi
 
 import (
+	"syscall"
 	"unsafe"
 
 	"github.com/lxn/win"
+	"github.com/pkg/errors"
 )
 
 func ClipCursor(rect win.RECT) (ok int, err error) {
@@ -16,6 +18,18 @@ func EnumDesktopWindows(hDesktop win.HANDLE, lpEnumFunc uintptr, lParam uintptr)
 
 func FillRect(hdc win.HDC, rect win.RECT, hbr win.HBRUSH) (ok bool) {
 	return fillRect(uintptr(hdc), uintptr(unsafe.Pointer(&rect.Left)), uintptr(hbr))
+}
+
+func FindWindow(lpClassName string, lpWindowName string) (win.HWND, error) {
+	lpClassNameUTF16, err := syscall.UTF16PtrFromString(lpClassName)
+	if err != nil {
+		return win.HWND(NULL), errors.Wrap(err, "lpClassNameUTF16Ptr")
+	}
+	lpWindowNameUTF16, err := syscall.UTF16PtrFromString(lpWindowName)
+	if err != nil {
+		return win.HWND(NULL), errors.Wrap(err, "lpCWindowNameUTF16Ptr")
+	}
+	return win.FindWindow(lpClassNameUTF16, lpWindowNameUTF16), nil
 }
 
 func FindWindowEx(hwndParent win.HWND, hwndChildAfter win.HWND, lpszClass *uint16, lpszWindow *uint16) (hwnd win.HWND) {
