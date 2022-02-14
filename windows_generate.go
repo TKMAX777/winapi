@@ -38,26 +38,28 @@ func errnoErr(e syscall.Errno) error {
 }
 
 var (
-	modGdi32  = windows.NewLazySystemDLL("Gdi32.dll")
-	moduser32 = windows.NewLazySystemDLL("user32.dll")
+	modGdi32    = windows.NewLazySystemDLL("Gdi32.dll")
+	modMmdevapi = windows.NewLazySystemDLL("Mmdevapi.dll")
+	moduser32   = windows.NewLazySystemDLL("user32.dll")
 
-	procCreateDIBSection           = modGdi32.NewProc("CreateDIBSection")
-	procCreatePen                  = modGdi32.NewProc("CreatePen")
-	procCreateRectRgnIndirect      = modGdi32.NewProc("CreateRectRgnIndirect")
-	procCreateSolidBrush           = modGdi32.NewProc("CreateSolidBrush")
-	procPolyDraw                   = modGdi32.NewProc("PolyDraw")
-	procClipCursor                 = moduser32.NewProc("ClipCursor")
-	procEnumDesktopWindows         = moduser32.NewProc("EnumDesktopWindows")
-	procFillRect                   = moduser32.NewProc("FillRect")
-	procFindWindowExW              = moduser32.NewProc("FindWindowExW")
-	procGetClassNameW              = moduser32.NewProc("GetClassNameW")
-	procGetWindowTextW             = moduser32.NewProc("GetWindowTextW")
-	procInvalidateRect             = moduser32.NewProc("InvalidateRect")
-	procSetLayeredWindowAttributes = moduser32.NewProc("SetLayeredWindowAttributes")
-	procSetWindowRgn               = moduser32.NewProc("SetWindowRgn")
-	procSetWindowTextW             = moduser32.NewProc("SetWindowTextW")
-	procShowCursor                 = moduser32.NewProc("ShowCursor")
-	procUpdateLayeredWindow        = moduser32.NewProc("UpdateLayeredWindow")
+	procCreateDIBSection            = modGdi32.NewProc("CreateDIBSection")
+	procCreatePen                   = modGdi32.NewProc("CreatePen")
+	procCreateRectRgnIndirect       = modGdi32.NewProc("CreateRectRgnIndirect")
+	procCreateSolidBrush            = modGdi32.NewProc("CreateSolidBrush")
+	procPolyDraw                    = modGdi32.NewProc("PolyDraw")
+	procActivateAudioInterfaceAsync = modMmdevapi.NewProc("ActivateAudioInterfaceAsync")
+	procClipCursor                  = moduser32.NewProc("ClipCursor")
+	procEnumDesktopWindows          = moduser32.NewProc("EnumDesktopWindows")
+	procFillRect                    = moduser32.NewProc("FillRect")
+	procFindWindowExW               = moduser32.NewProc("FindWindowExW")
+	procGetClassNameW               = moduser32.NewProc("GetClassNameW")
+	procGetWindowTextW              = moduser32.NewProc("GetWindowTextW")
+	procInvalidateRect              = moduser32.NewProc("InvalidateRect")
+	procSetLayeredWindowAttributes  = moduser32.NewProc("SetLayeredWindowAttributes")
+	procSetWindowRgn                = moduser32.NewProc("SetWindowRgn")
+	procSetWindowTextW              = moduser32.NewProc("SetWindowTextW")
+	procShowCursor                  = moduser32.NewProc("ShowCursor")
+	procUpdateLayeredWindow         = moduser32.NewProc("UpdateLayeredWindow")
 )
 
 func CreateDIBSection(hdc uintptr, pbmi uintptr, usage uint, ppvBits uintptr, hSection uintptr, offset uint32) (hBitMap uintptr) {
@@ -87,6 +89,12 @@ func CreateSolidBrush(color uint32) (hbrush uintptr) {
 func PolyDraw(hdc uintptr, apt uintptr, aj uintptr, cpt int) (ok bool) {
 	r0, _, _ := syscall.Syscall6(procPolyDraw.Addr(), 4, uintptr(hdc), uintptr(apt), uintptr(aj), uintptr(cpt), 0, 0)
 	ok = r0 != 0
+	return
+}
+
+func activateAudioInterfaceAsync(deviceInterfacePath *uint16, riid uintptr, activationParams uintptr, completionHandler uintptr, createAsync uintptr) (hresult int32) {
+	r0, _, _ := syscall.Syscall6(procActivateAudioInterfaceAsync.Addr(), 5, uintptr(unsafe.Pointer(deviceInterfacePath)), uintptr(riid), uintptr(activationParams), uintptr(completionHandler), uintptr(createAsync), 0)
+	hresult = int32(r0)
 	return
 }
 

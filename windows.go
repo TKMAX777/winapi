@@ -21,3 +21,5 @@ const NULL uintptr = 0
 //sys PolyDraw(hdc uintptr, apt uintptr, aj uintptr, cpt int) (ok bool) = Gdi32.PolyDraw
 //sys createRectRgnIndirect(rect uintptr) (rgn uintptr) = Gdi32.CreateRectRgnIndirect
 //sys CreateDIBSection(hdc uintptr, pbmi uintptr, usage uint, ppvBits uintptr, hSection uintptr, offset uint32) (hBitMap uintptr) = Gdi32.CreateDIBSection
+
+//sys activateAudioInterfaceAsync(deviceInterfacePath *uint16, riid uintptr, activationParams uintptr, completionHandler uintptr, createAsync uintptr) (hresult int32) = Mmdevapi.ActivateAudioInterfaceAsync
